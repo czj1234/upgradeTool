@@ -727,8 +727,12 @@ function dropHACS() {
 function main() {
     // shell 获取 config.js 中参数接口，跳过参数检查
     if ("getArg" == CUROPR) {
-        var cmd = "println(" + ARGNAME + ")";
-        eval(cmd);
+        if(Array.isArray(eval(ARGNAME)) == true){
+            println(eval(ARGNAME).join(" "));
+        }else{
+            var cmd = "println(" + ARGNAME + ")";
+            eval(cmd);
+        }
         return;
     }
 

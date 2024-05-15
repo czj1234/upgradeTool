@@ -21,13 +21,9 @@ SQLPORT=$(sdb -e "var CUROPR = \"getArg\";var ARGNAME = \"SQLPORT\";var DATESTR 
 test $? -ne 0 && echo "[ERROR] Failed to get SQLPORT from config.js" && exit 1
 MYSQLDIFFPATH=$(sdb -e "var CUROPR = \"getArg\";var ARGNAME = \"MYSQLDIFFPATH\";var DATESTR = \"${DATESTR}\"" -f cluster_opr.js)
 test $? -ne 0 && echo "[ERROR] Failed to get MYSQLDIFFPATH from config.js" && exit 1
-MYSQLHOSTNAMES=$(sdb -e "var CUROPR = \"getArg\";var ARGNAME = \"MYSQLHOSTNAMES\";var DATESTR = \"${DATESTR}\"" -f cluster_opr.js)
+MYSQLHOSTNAMES=($(sdb -e "var CUROPR = \"getArg\";var ARGNAME = \"MYSQLHOSTNAMES\";var DATESTR = \"${DATESTR}\"" -f cluster_opr.js))
 test $? -ne 0 && echo "[ERROR] Failed to get MYSQLHOSTNAMES from config.js" && exit 1
-IFS=',' read -r -a MYSQLHOSTNAMES <<< "$MYSQLHOSTNAMES"
-# MYSQLDBNAMES=$(sdb -e "var CUROPR = \"getArg\";var ARGNAME = \"MYSQLDBNAMES\";var DATESTR = \"${DATESTR}\"" -f cluster_opr.js)
-# test $? -ne 0 && echo "[ERROR] Failed to get MYSQLDBNAMES from config.js" && exit 1
 # IFS=',' read -r -a MYSQLDBNAMES <<< "$MYSQLDBNAMES"
-
 mkdir -p "${UPGRADEBACKUPPATH}/mysqlDiff"
 test $? -ne 0 && echo "[ERROR] Failed to mkdir ${UPGRADEBACKUPPATH}/mysqlDiff" && exit 1
 
@@ -47,10 +43,10 @@ for (( k = 0; k < ${#MYSQLDBNAMES[@]}; k++)); do
         for ((j = i+1; j < ${#MYSQLHOSTNAMES[@]}; j++)); do
             instance1=${MYSQLHOSTNAMES[i]}
             instance2=${MYSQLHOSTNAMES[j]}
-            savePath="${UPGRADEBACKUPPATH}/mysqlDiff/diff${instance1}and${instance2}"
+            savePath="${UPGRADEBACKUPPATH}/mysqlDiff/diff_${diffDB}_${instance1}_${instance2}"
             python "$MYSQLDIFFPATH" --server1="$SQLUSER":"$SQLPASSWD"@"$instance1":"$SQLPORT" --server2="$SQLUSER":"$SQLPASSWD"@"$instance2":"$SQLPORT" --difftype=sql "$diffDB":"$diffDB" --changes-for=server2 --width 150 --force --check-permission > "$savePath"
-            test $? -ne 0 && echo "[ERROR] Failed to diff mysql from $instance1 and $instance2" && exit 1
-            echo "Comparing instances from hosts: $instance1 and $instance2,detail see $savePath"
+            test $? -ne 0 && echo "[ERROR] Failed to diff database[$diffDB] from $instance1 and $instance2" && exit 1
+            echo "Comparing database[$diffDB] from instances: $instance1 and $instance2,detail see $savePath"
         done
     done
 done
