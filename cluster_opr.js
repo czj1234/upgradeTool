@@ -82,7 +82,7 @@ function saveSNAPSHOTCLInfo(filename) {
     }
 
     try {
-        var cursor = db.exec('select t2.Name,t2.TotalRecords,t2.TotalLobs from (select t.Name,t.Details.TotalRecords as TotalRecords,t.Details.TotalLobs as TotalLobs from (select Name,Details from $SNAPSHOT_CL split by Details) as t ) as t2 order by t2.Name,t2.TotalRecords,t2.TotalLobs');
+        var cursor = db.exec('select t2.Name,t2.TotalRecords,t2.TotalLobs from (select t.Name,t.Details.TotalRecords as TotalRecords,t.Details.TotalLobs as TotalLobs from (select Name,Details from $SNAPSHOT_CL split by Details) as t ) as t2 order by t2.Name');
         while(cursor.next()) {
             let current = cursor.current().toObj();
             // 拼成一行写入， diff 可用看到哪些表不对
@@ -341,12 +341,12 @@ function collectInfo_old() {
         return false;
     }
 
-    // println("Begin to save HASQL info");
-    // if (saveHASQL(HASQLFILE)) {
-    //     println("Done");
-    // } else {
-    //     return false;
-    // }
+    println("Begin to save HASQL info");
+    if (saveHASQL(HASQLFILE)) {
+        println("Done");
+    } else {
+        return false;
+    }
 
     return true;
 }
@@ -371,12 +371,12 @@ function collectInfo_new() {
         return false;
     }
 
-    // println("Begin to save HASQL");
-    // if (saveHASQL(HASQLFILE_NEW)) {
-    //     println("Done");
-    // } else {
-    //     return false;
-    // }
+    println("Begin to save HASQL");
+    if (saveHASQL(HASQLFILE_NEW)) {
+        println("Done");
+    } else {
+        return false;
+    }
 
     return true;
 }
@@ -428,30 +428,30 @@ function checkCluster() {
         return false;
     }
     println("Done");
-    // println("Begin to check HASQL");
-    // try {
-    //     var cmd = "db.HAInstanceGroup_" + INSTANCEGROUP + ".HAInstanceState.find()";
-    //     var cursor = eval(cmd);
-    //     var id = -1;
-    //     while(cursor.next()) {
-    //         if (-1 == id) {
-    //             id = cursor.current().toObj().SQLID;
-    //         } else if (id != cursor.current().toObj().SQLID) {
-    //             println("There are different SQLID in the HAInstanceGroup_" + INSTANCEGROUP + ".HAInstanceState");
-    //             cursor.close();
-    //             db.close();
-    //             return false;
-    //         }
-    //     }
-    // } catch (error) {
-    //     println("Failed to check SQLID in the HAInstanceGroup");
-    //     if (null != cursor) {
-    //         cursor.close();
-    //     }
-    //     return false;
-    // } finally {
-    //     db.close();
-    // }
+    println("Begin to check HASQL");
+    try {
+        var cmd = "db.HAInstanceGroup_" + INSTANCEGROUP + ".HAInstanceState.find()";
+        var cursor = eval(cmd);
+        var id = -1;
+        while(cursor.next()) {
+            if (-1 == id) {
+                id = cursor.current().toObj().SQLID;
+            } else if (id != cursor.current().toObj().SQLID) {
+                println("There are different SQLID in the HAInstanceGroup_" + INSTANCEGROUP + ".HAInstanceState");
+                cursor.close();
+                db.close();
+                return false;
+            }
+        }
+    } catch (error) {
+        println("Failed to check SQLID in the HAInstanceGroup");
+        if (null != cursor) {
+            cursor.close();
+        }
+        return false;
+    } finally {
+        db.close();
+    }
     println("Done");
     return true;
 }
@@ -677,48 +677,6 @@ function dropSYSRECYCLEITEMS() {
     return true;
 }
 
-function dropHACS() {
-    var db;
-
-    try {
-        db = new Sdb(COORDADDR, COORDSVC, SDBUSER, SDBPASSWD);
-    } catch (error) {
-        println("Failed to connect sdb, error info: " + error + "(" + getLastErrMsg() + ")");
-        return false;
-    }
-
-    try {
-        var cursor = db.exec('select GroupName,ServiceName,HostName from $SNAPSHOT_SYSTEM where GroupName <> "SYSCoord" and GroupName <> "SYSCatalogGroup" order by GroupName');
-        while(cursor.next()) {
-            var current = cursor.current().toObj();
-            try {
-                println("Drop " + current.GroupName + " HACS on " + current.HostName + ":" + current.ServiceName);
-                var sub_db = new Sdb(current.HostName, current.ServiceName, SDBUSER, SDBPASSWD);
-                var instanceGroupName = "HAInstanceGroup_" + INSTANCEGROUP;
-                if(sub_db.exec( "select Name from $LIST_CS where Name='" + instanceGroupName + "'" ).size()==1){
-                    sub_db.dropCS(instanceGroupName);
-                }
-                if(sub_db.exec( "select Name from $LIST_CS where Name='HASysGlobalInfo'" ).size()==1){
-                    sub_db.dropCS("HASysGlobalInfo" );
-                }
-            } catch (error) {
-                println("Failed to drop HACS, error info: " + error + "(" + getLastErrMsg() + ")");
-                return false;
-            } finally {
-                sub_db.close();
-            }
-        }
-    } catch (error) {
-        println("Failed to get $SNAPSHOT_SYSTEM, error info: " + error + "(" + getLastErrMsg() + ")");
-        if (null != cursor) {
-            cursor.close();
-        }
-        db.close();
-        return false;
-    }
-    return true;
-}
-
 /* *****************************************************************************
 @discription: 入口函数
 @author: Qiqian Jiang
@@ -727,12 +685,8 @@ function dropHACS() {
 function main() {
     // shell 获取 config.js 中参数接口，跳过参数检查
     if ("getArg" == CUROPR) {
-        if(Array.isArray(eval(ARGNAME)) == true){
-            println(eval(ARGNAME).join(" "));
-        }else{
-            var cmd = "println(" + ARGNAME + ")";
-            eval(cmd);
-        }
+        var cmd = "println(" + ARGNAME + ")";
+        eval(cmd);
         return;
     }
 
@@ -746,10 +700,10 @@ function main() {
 
     /* Doing */
     if ("collect_old" == CUROPR) {
-        // if (typeof(INSTANCEGROUP) == "undefined") {
-        //     println("[ERROR] INSTANCEGROUP is undefined");
-        //     return 1;
-        // }
+        if (typeof(INSTANCEGROUP) == "undefined") {
+            println("[ERROR] INSTANCEGROUP is undefined");
+            return 1;
+        }
         println("Begin to collect cluster information before upgrade...");
         if (collectInfo_old()) {
             println("Done");
@@ -758,10 +712,10 @@ function main() {
             return 1;
         }
     } else if ("collect_new" == CUROPR) {
-        // if (typeof(INSTANCEGROUP) == "undefined") {
-        //     println("[ERROR] INSTANCEGROUP is undefined");
-        //     return 1;
-        // }
+        if (typeof(INSTANCEGROUP) == "undefined") {
+            println("[ERROR] INSTANCEGROUP is undefined");
+            return 1;
+        }
         println("Begin to collect cluster information...");
         if (collectInfo_new()) {
             println("Done");
@@ -770,10 +724,10 @@ function main() {
             return 1;
         }
     } else if ("checkCluster" == CUROPR) {
-        // if (typeof(INSTANCEGROUP) == "undefined") {
-        //     println("[ERROR] INSTANCEGROUP is undefined");
-        //     return 1;
-        // }
+        if (typeof(INSTANCEGROUP) == "undefined") {
+            println("[ERROR] INSTANCEGROUP is undefined");
+            return 1;
+        }
         println("Begin to check cluster...");
         if (checkCluster()) {
             println("Done");
@@ -792,18 +746,6 @@ function main() {
     } else if ("dropSYSRECYCLEITEMS" == CUROPR) {
         println("Begin to drop SYSRECYCLEITEMS after rollback");
         if (dropSYSRECYCLEITEMS()) {
-            println("Done");
-        } else {
-            println("Failed");
-            return 1;
-        }
-    } else if ("dropHACS" == CUROPR) {
-        if (typeof(INSTANCEGROUP) == "undefined") {
-            println("[ERROR] INSTANCEGROUP is undefined");
-            return 1;
-        }
-        println("Begin to drop HACS after rollback");
-        if (dropHACS()) {
             println("Done");
         } else {
             println("Failed");

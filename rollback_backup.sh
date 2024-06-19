@@ -20,6 +20,7 @@ else
     SQL_INSTALL_DIR=""
 fi
 
+# 备份新安装的编目目录
 if [ "`sdblist -m local -r catalog -l | grep 'catalog'`" != "" ]; then
     echo "Begin to backup new catalog path"
     CATALOGPATH=`sdblist -m local -r catalog -l | grep 'catalog' | sort | awk '{print $10}'`
@@ -32,7 +33,6 @@ if [ "`sdblist -m local -r catalog -l | grep 'catalog'`" != "" ]; then
     mkdir -p "${UPGRADEBACKUPPATH}/catalog_${CATALOGSVC}_new/"
     test $? -ne 0 && echo "[ERROR] Failed to mkdir ${UPGRADEBACKUPPATH}/catalog_${CATALOGSVC}_new/" && exit 1
 
-    # 备份新安装的编目目录
     mv "${CATALOGPATH}" "${UPGRADEBACKUPPATH}/catalog_${CATALOGSVC}_new/"
     test $? -ne 0 && echo "[ERROR] Failed to mv ${CATALOGPATH} to ${UPGRADEBACKUPPATH}/catalog_${CATALOGSVC}_new/" && exit 1
     echo "Done"
