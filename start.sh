@@ -50,20 +50,20 @@ if [[ -f '/etc/default/sequoiasql-mysql' || -f '/etc/default/sequoiasql-mariadb'
     test $rc -ne 0 && echo "[ERROR] sdb_sql_ctl status error: $rc" && exit 1
     echo "Done"
     echo "----------------------------------------------------------"
-
+    
     echo "Running: sdb_sql_ctl startall"
     ${SQL_INSTALL_DIR}/bin/sdb_sql_ctl startall
     rc=$?
     test $rc -ne 0 && echo "[ERROR] sdb_sql_ctl startall error: $rc" && exit 1
     echo "Done"
     echo "----------------------------------------------------------"
-
+    
     echo "Running: sdb_sql_ctl status"
     ${SQL_INSTALL_DIR}/bin/sdb_sql_ctl status
     rc=$?
     test $rc -ne 0 && echo "[ERROR] sdb_sql_ctl status error: $rc" && exit 1
     echo "Done"
-else 
+else
     echo "[WARN] SequoiaSQL is not installed on this machine"
 fi
 echo "----------------------------------------------------------"

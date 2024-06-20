@@ -37,7 +37,7 @@ test $rc -ne 0 && echo "[ERROR] Failed to upgrade sdb, error code: $rc" && exit 
 echo "Done"
 
 if [ "${SQL_INSTALL_DIR}" != "" ]; then
-echo "Begin to rollback SequoiaSQL"
+    echo "Begin to rollback SequoiaSQL"
     ${OLDSQLRUNPACKAGE} --mode unattended --prefix "${SQL_INSTALL_DIR}" --installmode cover
     rc=$?
     test $rc -ne 0 && echo "[ERROR] Failed to upgrade sql, error code: $rc" && exit 1

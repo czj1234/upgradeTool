@@ -94,4 +94,4 @@ sdb 'db.getRG("group86").reelect({HostName:"pecmddb08"})'
 sdb 'db.getRG("group87").reelect({HostName:"pecmddb08"})'
 sdb 'db.getRG("group88").reelect({HostName:"pecmddb08"})'
 
-sdb 'db.snapshot(12,{IsPrimary:true},{NodeName:""})' 
+sdb 'db.snapshot(12,{IsPrimary:true},{NodeName:""})'
