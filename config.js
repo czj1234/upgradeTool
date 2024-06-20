@@ -20,9 +20,7 @@ var NEWSQLRUNPACKAGE = "/opt/test/sequoiasql-mysql-5.8.2-linux_x86_64-enterprise
 // 回滚包
 var OLDSDBRUNPACKAGE = "/opt/test/sequoiadb-3.4.3-linux_x86_64-enterprise-installer.run";
 var OLDSQLRUNPACKAGE = "/opt/test/sequoiasql-mysql-3.4.3-linux_x86_64-enterprise-installer.run";
-// 创建的测试 DOMAIN 名
-var TESTDOMAIN = "testDomain";
-// 创建的测试 CS 名，对应 SQL 的库
+// 创建的测试 SDB CS 名，SQL 的库会增加 _sql 后缀避免重复（升级前创建，避免升级过程中DDL）
 var TESTCS = "testCS";
-// 创建的测试 CL 名，对应 SQL 的表
+// 创建的测试 SDB CL 名，SQL 的表会增加 _sql 后缀避免重复（升级前创建，避免升级过程中DDL）
 var TESTCL = "testCL"

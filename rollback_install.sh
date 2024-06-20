@@ -22,11 +22,11 @@ else
     SQL_INSTALL_DIR=""
 fi
 
-OLDSDBRUNPACKAGE=$(${SDB_INSTALL_DIR}/bin/sdb -e "var CUROPR = \"getArg\";var ARGNAME = \"OLDSDBRUNPACKAGE\";var DATESTR = \"${DATESTR}\"" -f cluster_opr.js)
+OLDSDBRUNPACKAGE=$(${SDB_INSTALL_DIR}/bin/sdb -e "var CUROPR = \"getArg\";var ARGNAME = \"OLDSDBRUNPACKAGE\"" -f cluster_opr.js)
 test $? -ne 0 && echo "[ERROR] Failed to get OLDSDBRUNPACKAGE from config.js" && exit 1
 test ! -f "${OLDSDBRUNPACKAGE}" && echo "[ERROR] Failed to get OLDSDBRUNPACKAGE from config.js" && exit 1
 
-OLDSQLRUNPACKAGE=$(${SDB_INSTALL_DIR}/bin/sdb -e "var CUROPR = \"getArg\";var ARGNAME = \"OLDSQLRUNPACKAGE\";var DATESTR = \"${DATESTR}\"" -f cluster_opr.js)
+OLDSQLRUNPACKAGE=$(${SDB_INSTALL_DIR}/bin/sdb -e "var CUROPR = \"getArg\";var ARGNAME = \"OLDSQLRUNPACKAGE\"" -f cluster_opr.js)
 test $? -ne 0 && echo "[ERROR] Failed to get OLDSQLRUNPACKAGE from config.js" && exit 1
 test ! -f "${OLDSQLRUNPACKAGE}" && echo "[ERROR] Failed to get OLDSQLRUNPACKAGE from config.js" && exit 1
 
