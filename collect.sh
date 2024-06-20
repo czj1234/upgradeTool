@@ -26,6 +26,10 @@ if [[ -f '/etc/default/sequoiasql-mysql' || -f '/etc/default/sequoiasql-mariadb'
     test $? -ne 0 && echo "[ERROR] Failed to get SQLUSER from config.js" && exit 1
     SQLPASSWD=$(sdb -e "var CUROPR = \"getArg\";var ARGNAME = \"SQLPASSWD\"" -f cluster_opr.js)
     test $? -ne 0 && echo "[ERROR] Failed to get SQLPASSWD from config.js" && exit 1
+    SQLHOST=`hostname`
+    test $? -ne 0 && echo "[ERROR] Failed to use \`hostname\`" && exit 1
+    SQLPORT=$(sdb -e "var CUROPR = \"getArg\";var ARGNAME = \"SQLPORT\"" -f cluster_opr.js)
+    test $? -ne 0 && echo "[ERROR] Failed to get SQLPORT from config.js" && exit 1
     TESTCS=$(sdb -e "var CUROPR = \"getArg\";var ARGNAME = \"TESTCS\"" -f cluster_opr.js)
     test $? -ne 0 && echo "[ERROR] Failed to get TESTCS from config.js" && exit 1
     TESTCL=$(sdb -e "var CUROPR = \"getArg\";var ARGNAME = \"TESTCL\"" -f cluster_opr.js)
@@ -33,25 +37,13 @@ if [[ -f '/etc/default/sequoiasql-mysql' || -f '/etc/default/sequoiasql-mariadb'
     TESTCS="${TESTCS}_sql"
     TESTCL="${TESTCL}_sql"
     
-    
-    # 找出实例组下的一个 SQL 实例
-    echo "Begin to check instance group ${INSTANCEGROUP}"
-    if [ "`ha_inst_group_list -u"${SDBUSER}" -p"${SDBPASSWD}" --name="${INSTANCEGROUP}"`" != "" ]; then
-        # 发现 ha_inst_group_list 打印间隔有问题，如果某些内容过长会导致 awk $x 出错，暂时没办法搞
-        SQLHOSTARRAY=(`ha_inst_group_list -u"${SDBUSER}" -p"${SDBPASSWD}" --name="${INSTANCEGROUP}" | tail -n 1 | awk '{print $3}'`)
-        SQLPORTARRAY=(`ha_inst_group_list -u"${SDBUSER}" -p"${SDBPASSWD}" --name="${INSTANCEGROUP}" | tail -n 1 | awk '{print $4}'`)
-        test ${#SQLHOSTARRAY[*]} -ne 1 &&echo "[ERROR] Failed to get ${INSTANCEGROUP} HOST from ha_inst_group_list" && exit 1
-        test ${#SQLHOSTARRAY[*]} -ne 1 &&echo "[ERROR] Failed to get ${INSTANCEGROUP} PORT from ha_inst_group_list" && exit 1
-    else
-        echo "[ERROR] Failed to find SQL HA group ${INSTANCEGROUP} in ha_inst_group_list"
-        exit 1
-    fi
-    mysql -h"${SQLHOSTARRAY[0]}" -P "${SQLPORTARRAY[0]}" -u "${SQLUSER}" -p"${SQLPASSWD}" -e "create database ${TESTCS};"
-    test $? -ne 0 && echo "[ERROR] Create database ${TESTCS} in ${SQLHOSTARRAY[0]}:${SQLPORTARRAY[0]} SQL failed" && exit 1
-    mysql -h"${SQLHOSTARRAY[0]}" -P "${SQLPORTARRAY[0]}" -u "${SQLUSER}" -p"${SQLPASSWD}" -D "${TESTCS}" -e "create table ${TESTCL}(uid int,name varchar(10),address varchar(10));"
-    test $? -ne 0 && echo "[ERROR] Create table ${TESTCS}.${TESTCL} in ${SQLHOSTARRAY[0]}:${SQLPORTARRAY[0]} SQL failed" && exit 1
-    echo "Create table ${TESTCS}.${TESTCL} in ${SQLHOSTARRAY[0]}:${SQLPORTARRAY[0]} SQL success"
-    
+    mysql -h"${SQLHOST}" -P "${SQLPORT}" -u "${SQLUSER}" -p"${SQLPASSWD}" -e "drop database if exists ${TESTCS};"
+    test $? -ne 0 && echo "[ERROR] Drop database if exists ${TESTCS} in ${SQLHOST}:${SQLPORT} SQL failed" && exit 1
+    mysql -h"${SQLHOST}" -P "${SQLPORT}" -u "${SQLUSER}" -p"${SQLPASSWD}" -e "create database ${TESTCS};"
+    test $? -ne 0 && echo "[ERROR] Create database ${TESTCS} in ${SQLHOST}:${SQLPORT} SQL failed" && exit 1
+    mysql -h"${SQLHOST}" -P "${SQLPORT}" -u "${SQLUSER}" -p"${SQLPASSWD}" -D "${TESTCS}" -e "create table ${TESTCL}(uid int,name varchar(10),address varchar(10));"
+    test $? -ne 0 && echo "[ERROR] Create table ${TESTCS}.${TESTCL} in ${SQLHOST}:${SQLPORT} SQL failed" && exit 1
+    echo "Create table ${TESTCS}.${TESTCL} in ${SQLHOST}:${SQLPORT} SQL success"
 fi
 # 保存集群升级前集合名，各个集合数据条数，域名和 HASQL 相关信息，用于升级后对比（在创建测试表之后再收集信息）
 sdb -e "var CUROPR = \"collect_old\";var INSTANCEGROUP = \"${INSTANCEGROUP}\";var DATESTR = \"`date +%Y%m%d`\"" -f cluster_opr.js

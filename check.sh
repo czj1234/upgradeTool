@@ -2,7 +2,7 @@
 
 echo "Begin to check backup dir UPGRADEBACKUPPATH"
 DATESTR="`date +%Y%m%d`"
-UPGRADEBACKUPPATH=$(sdb -e "var CUROPR = \"getArg\";var ARGNAME = \"UPGRADEBACKUPPATH\"" -f cluster_opr.js)
+UPGRADEBACKUPPATH=$(sdb -e "var CUROPR = \"getArg\";var ARGNAME = \"UPGRADEBACKUPPATH\";var DATESTR = \"${DATESTR}\"" -f cluster_opr.js)
 test $? -ne 0 && echo "[ERROR] Failed to get UPGRADEBACKUPPATH from config.js" && exit 1
 test ! -d "${UPGRADEBACKUPPATH}" && echo "[ERROR] Failed to get UPGRADEBACKUPPATH from config.js" && exit 1
 echo "Backup dir: ${UPGRADEBACKUPPATH}"
@@ -87,7 +87,7 @@ if [ "`ha_inst_group_list -u"${SDBUSER}" -p"${SDBPASSWD}" | sed '1d' | grep -w "
     SQLPORT=`ha_inst_group_list -u"${SDBUSER}" -p"${SDBPASSWD}" | sed '1d' | grep -w " ${SQLPORT} " | grep -v "\`hostname\`" | head -n 1 | awk '{print $4}'`
     mysql -h"${SQLHOST}" -P "${SQLPORT}" -u "${SQLUSER}" -p"${SQLPASSWD}" -e "show create table ${TESTCS}.${TESTCL};"
     test $? -ne 0 && echo "[ERROR] Show create table ${TESTCS}.${TESTCL} in ${SQLHOST} SQL failed" && exit 1
-    mysql -h"${SQLHOST}" -P"${SQLPORT}" -u "${SQLUSER}" -p"${SQLPASSWD}" -e "select * from ${TESTCS}.${TESTCL};"
+    mysql -h"${SQLHOST}" -P "${SQLPORT}" -u "${SQLUSER}" -p"${SQLPASSWD}" -e "select * from ${TESTCS}.${TESTCL};"
     test $? -ne 0 && echo "[ERROR] Select ${TESTCS}.${TESTCL} in ${SQLHOST} SQL failed" && exit 1
     # 不做 DDL
     # mysql -h"${SQLHOST}" -P"${SQLPORT}" -u "${SQLUSER}" -p"${SQLPASSWD}" -e "drop database ${TESTCS};"
