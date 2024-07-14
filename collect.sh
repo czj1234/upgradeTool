@@ -8,7 +8,7 @@
 
 # ha_inst_group_list -u"${SDBUSER}" -p"${SDBPASSWD}" > /dev/null
 # test $? -ne 0 && echo "[ERROR] Failed to get HASQL instanace group from ha_inst_group_list" && exit 1
-# 
+#
 # # 检查是否有多个实例组，不支持多实例组
 # if [ "`ha_inst_group_list -u${SDBUSER} -p${SDBPASSWD} | sed '1d' | awk '{print $1}' | uniq | wc -l`" != "1" ]; then
 #         echo "[ERROR] More than one instance group was detected"

@@ -27,6 +27,6 @@ var TESTCS = "testCS";
 // 创建的测试 CL 名，对应 SQL 的表
 var TESTCL = "testCL";
 // MySQLDiff工具路径
-var MYSQLDIFFPATH="/home/sdbadmin/MySQLDiff/mysqldiff.py";
+var MYSQLDIFFPATH = "/home/sdbadmin/MySQLDiff/mysqldiff.py";
 // mysql实例主机名(默认以配置的第一个主机上的所有数据库进行对比，需要注意第一个主机名的配置)
-var MYSQLHOSTNAMES=["jsdb02","jsdb04","jsdb06","hrjs1db3","hrjs1db6","hrjs1db9"];
+var MYSQLHOSTNAMES = ["jsdb02", "jsdb04", "jsdb06", "hrjs1db3", "hrjs1db6", "hrjs1db9"];

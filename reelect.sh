@@ -64,4 +64,4 @@ sdb 'db.getRG("group58").reelect({HostName:"jsdb06"})'
 sdb 'db.getRG("group59").reelect({HostName:"jsdb06"})'
 sdb 'db.getRG("group60").reelect({HostName:"jsdb06"})'
 
-sdb 'db.snapshot(12,{IsPrimary:true},{NodeName:""})' 
+sdb 'db.snapshot(12,{IsPrimary:true},{NodeName:""})'
