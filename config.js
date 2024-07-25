@@ -20,12 +20,10 @@ var NEWSQLRUNPACKAGE = "/opt/run/sequoiasql-mysql-5.8.2-linux_x86_64-enterprise-
 // 回滚包
 var OLDSDBRUNPACKAGE = "/opt/run/sequoiadb-3.2.7-linux_x86_64-enterprise-installer.run";
 var OLDSQLRUNPACKAGE = "/opt/run/sequoiasql-mysql-3.2.7-linux_x86_64-enterprise-installer.run";
-// 创建的测试 DOMAIN 名
-var TESTDOMAIN = "testDomain";
-// 创建的测试 CS 名，对应 SQL 的库
+// 创建的测试 SDB CS 名，SQL 的库会增加 _sql 后缀避免重复（升级前创建，避免升级过程中DDL）
 var TESTCS = "testCS";
-// 创建的测试 CL 名，对应 SQL 的表
-var TESTCL = "testCL";
+// 创建的测试 SDB CL 名，SQL 的表会增加 _sql 后缀避免重复（升级前创建，避免升级过程中DDL）
+var TESTCL = "testCL"
 // MySQLDiff工具路径
 var MYSQLDIFFPATH = "/home/sdbadmin/MySQLDiff/mysqldiff.py";
 // mysql实例主机名(默认以配置的第一个主机上的所有数据库进行对比，需要注意第一个主机名的配置)

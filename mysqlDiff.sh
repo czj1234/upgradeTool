@@ -13,15 +13,15 @@ else
     echo "Backup dir: ${UPGRADEBACKUPPATH}"
 fi
 
-SQLUSER=$(sdb -e "var CUROPR = \"getArg\";var ARGNAME = \"SQLUSER\";var DATESTR = \"${DATESTR}\"" -f cluster_opr.js)
+SQLUSER=$(sdb -e "var CUROPR = \"getArg\";var ARGNAME = \"SQLUSER\"" -f cluster_opr.js)
 test $? -ne 0 && echo "[ERROR] Failed to get SQLUSER from config.js" && exit 1
-SQLPASSWD=$(sdb -e "var CUROPR = \"getArg\";var ARGNAME = \"SQLPASSWD\";var DATESTR = \"${DATESTR}\"" -f cluster_opr.js)
+SQLPASSWD=$(sdb -e "var CUROPR = \"getArg\";var ARGNAME = \"SQLPASSWD\"" -f cluster_opr.js)
 test $? -ne 0 && echo "[ERROR] Failed to get SQLPASSWD from config.js" && exit 1
-SQLPORT=$(sdb -e "var CUROPR = \"getArg\";var ARGNAME = \"SQLPORT\";var DATESTR = \"${DATESTR}\"" -f cluster_opr.js)
+SQLPORT=$(sdb -e "var CUROPR = \"getArg\";var ARGNAME = \"SQLPORT\"" -f cluster_opr.js)
 test $? -ne 0 && echo "[ERROR] Failed to get SQLPORT from config.js" && exit 1
-MYSQLDIFFPATH=$(sdb -e "var CUROPR = \"getArg\";var ARGNAME = \"MYSQLDIFFPATH\";var DATESTR = \"${DATESTR}\"" -f cluster_opr.js)
+MYSQLDIFFPATH=$(sdb -e "var CUROPR = \"getArg\";var ARGNAME = \"MYSQLDIFFPATH\"" -f cluster_opr.js)
 test $? -ne 0 && echo "[ERROR] Failed to get MYSQLDIFFPATH from config.js" && exit 1
-MYSQLHOSTNAMES=($(sdb -e "var CUROPR = \"getArg\";var ARGNAME = \"MYSQLHOSTNAMES\";var DATESTR = \"${DATESTR}\"" -f cluster_opr.js))
+MYSQLHOSTNAMES=($(sdb -e "var CUROPR = \"getArg\";var ARGNAME = \"MYSQLHOSTNAMES\"" -f cluster_opr.js))
 test $? -ne 0 && echo "[ERROR] Failed to get MYSQLHOSTNAMES from config.js" && exit 1
 # IFS=',' read -r -a MYSQLDBNAMES <<< "$MYSQLDBNAMES"
 mkdir -p "${UPGRADEBACKUPPATH}/mysqlDiff"
