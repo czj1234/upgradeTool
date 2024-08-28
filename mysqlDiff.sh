@@ -45,7 +45,7 @@ for (( k = 0; k < ${#MYSQLDBNAMES[@]}; k++)); do
             instance2=${MYSQLHOSTNAMES[j]}
             savePath="${UPGRADEBACKUPPATH}/mysqlDiff/diff_${diffDB}_${instance1}_${instance2}"
             python "$MYSQLDIFFPATH" --server1="$SQLUSER":"$SQLPASSWD"@"$instance1":"$SQLPORT" --server2="$SQLUSER":"$SQLPASSWD"@"$instance2":"$SQLPORT" --difftype=sql "$diffDB":"$diffDB" --changes-for=server2 --width 150 --force --check-permission > "$savePath"
-            test $? -ne 0 && echo "[ERROR] Failed to diff database[$diffDB] from $instance1 and $instance2" && exit 1
+            test $? -ne 0 && echo "[ERROR] Failed to diff database[$diffDB] from $instance1 and $instance2"
             echo "Comparing database[$diffDB] from instances: $instance1 and $instance2,detail see $savePath"
         done
     done
