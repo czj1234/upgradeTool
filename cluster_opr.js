@@ -224,7 +224,7 @@ function saveHASQL ( filename )
 
    try
    {
-      var cmd = "db.HAInstanceGroup_" + INSTANCEGROUP + ".HASQLLog.find()";
+      var cmd = "db.HAInstanceGroup_" + INSTANCEGROUP + ".HASQLLog.find().sort({SQLID:1})";
       var cursor = eval( cmd );
       while( cursor.next() )
       {
