@@ -24,3 +24,5 @@ var OLDSQLRUNPACKAGE = "/opt/test/sequoiasql-mysql-3.4.3-linux_x86_64-enterprise
 var TESTCS = "testCS";
 // 创建的测试 SDB CL 名，SQL 的表会增加 _sql 后缀避免重复（升级前创建，避免升级过程中DDL）
 var TESTCL = "testCL"
+// 回滚时是否需要安装 OM
+var ROLLBACKOM = false;
