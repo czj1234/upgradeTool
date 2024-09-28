@@ -66,11 +66,11 @@ TESTCL="${TESTCL}_sql"
 # mysql -h"${SQLHOST}" -P "${SQLPORT}" -u "${SQLUSER}" -p"${SQLPASSWD}" -D "${TESTCS}" -e "alter table ${TESTCL} add index uid_index(uid);"
 # test $? -ne 0 && echo "[ERROR] Alter table ${TESTCS}.${TESTCL} in SQL failed" && exit 1
 
-mysql -h"${SQLHOST}" -P "${SQLPORT}" -u "${SQLUSER}" -p"${SQLPASSWD}" -D "${TESTCS}" -e "insert into ${TESTCL} values(1,\"a\",\"广州\"),(2,\"A\",\"深圳\");"
+mysql -h"${SQLHOST}" -P "${SQLPORT}" -u "${SQLUSER}" -p"${SQLPASSWD}" -D "${TESTCS}" -e "insert into ${TESTCL} values(1,'a','广州'),(2,'A','深圳');"
 test $? -ne 0 && echo "[ERROR] Insert data to ${TESTCS}.${TESTCL} in SQL failed" && exit 1
 mysql -h"${SQLHOST}" -P "${SQLPORT}" -u "${SQLUSER}" -p"${SQLPASSWD}" -D "${TESTCS}" -e "select * from ${TESTCL};"
 test $? -ne 0 && echo "[ERROR] Select ${TESTCS}.${TESTCL} in SQL failed" && exit 1
-mysql -h"${SQLHOST}" -P "${SQLPORT}" -u "${SQLUSER}" -p"${SQLPASSWD}" -D "${TESTCS}" -e "update ${TESTCL} set address = \"东莞\" where uid =2;"
+mysql -h"${SQLHOST}" -P "${SQLPORT}" -u "${SQLUSER}" -p"${SQLPASSWD}" -D "${TESTCS}" -e "update ${TESTCL} set address = '东莞' where uid =2;"
 test $? -ne 0 && echo "[ERROR] Update ${TESTCS}.${TESTCL} in SQL failed" && exit 1
 mysql -h"${SQLHOST}" -P "${SQLPORT}" -u "${SQLUSER}" -p"${SQLPASSWD}" -D "${TESTCS}" -e "select * from ${TESTCL};"
 test $? -ne 0 && echo "[ERROR] Select ${TESTCS}.${TESTCL} in SQL failed" && exit 1

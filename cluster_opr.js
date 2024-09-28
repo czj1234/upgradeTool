@@ -94,7 +94,7 @@ function saveSNAPSHOTCLInfo ( filename )
 
    try
    {
-      var cursor = db.exec( 'select t2.Name,t2.TotalRecords,t2.TotalLobs from (select t.Name,t.Details.TotalRecords as TotalRecords,t.Details.TotalLobs as TotalLobs from (select Name,Details from $SNAPSHOT_CL split by Details) as t ) as t2 order by t2.Name' );
+      var cursor = db.exec( 'select t2.Name,t2.TotalRecords,t2.TotalLobs from (select t.Name,t.Details.TotalRecords as TotalRecords,t.Details.TotalLobs as TotalLobs from (select Name,Details from $SNAPSHOT_CL split by Details) as t ) as t2 order by t2.Name,t2.TotalRecords,t2.TotalLobs' );
       while( cursor.next() )
       {
          let current = cursor.current().toObj();
@@ -224,7 +224,7 @@ function saveHASQL ( filename )
 
    try
    {
-      var cmd = "db.HAInstanceGroup_" + INSTANCEGROUP + ".HASQLLog.find()";
+      var cmd = "db.HAInstanceGroup_" + INSTANCEGROUP + ".HASQLLog.find().sort({SQLID:1})";
       var cursor = eval( cmd );
       while( cursor.next() )
       {
@@ -867,6 +867,35 @@ function createTestCSCL ()
 }
 
 /* *****************************************************************************
+@discription: 获取索引数量（所有副本总数）
+@author: Qiqian Jiang
+@return: true/false
+***************************************************************************** */
+function getIndexCount ()
+{
+   var db;
+   try
+   {
+      db = new Sdb( COORDADDR, COORDSVC, SDBUSER, SDBPASSWD );
+   } catch( error )
+   {
+      println( "Failed to connect sdb, error info: " + error + "(" + getLastErrMsg() + ")" );
+      return false;
+   }
+   try
+   {
+      var count = db.exec( 'select sum(t1.Details.Indexes) as totalIndexesCount from (select Details from $SNAPSHOT_CL split by Details) as t1' ).current().toObj().totalIndexesCount;
+      println( "   Indexes count: " + count );
+   } catch( error )
+   {
+      println( "Failed to get indexes count from $SNAPSHOT_CL, error info: " + error + "(" + getLastErrMsg() + ")" );
+      db.close();
+      return false;
+   }
+   return true;
+}
+
+/* *****************************************************************************
 @discription: 入口函数
 @author: Qiqian Jiang
 @return: true/false
@@ -966,6 +995,17 @@ function main ()
    {
       println( "Begin to drop SYSRECYCLEITEMS after rollback" );
       if( dropSYSRECYCLEITEMS() )
+      {
+         println( "Done" );
+      } else
+      {
+         println( "Failed" );
+         return 1;
+      }
+   } else if( "getIndexCount" == CUROPR )
+   {
+      println( "Begin to get indexes count" );
+      if( getIndexCount() )
       {
          println( "Done" );
       } else
