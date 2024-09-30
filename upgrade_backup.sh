@@ -5,7 +5,7 @@ MY_USER=`whoami`
 echo "Begin to get sequoiadb install info"
 if [ -f "/etc/default/sequoiadb" ]; then
     . /etc/default/sequoiadb
-        
+    
     # 需要 root 用户去处理 /etc/default 下的文件，删除 INSTALL_DIR 后的 '/'
     if [ "`echo ${INSTALL_DIR} | grep '.*/$'`" != "" ]; then
         if [ "${MY_USER}" != "root" ]; then
@@ -19,7 +19,7 @@ if [ -f "/etc/default/sequoiadb" ]; then
         # 重新加载文件
         . /etc/default/sequoiadb
     fi
-
+    
     SDB_INSTALL_DIR="${INSTALL_DIR}"
     SDB_USER="${SDBADMIN_USER}"
     test ! -f "${SDB_INSTALL_DIR}/bin/sdblist" && echo "[ERROR] ${SDB_INSTALL_DIR}/bin/sdblist does not exist" && exit 1
@@ -33,8 +33,10 @@ else
 fi
 echo "Done"
 echo "Begin to get sequoiasql install info"
+if [[ -f '/etc/default/sequoiasql-mysql' || -f '/etc/default/sequoiasql-mariadb' ]]; then
     sql_type=""
     test -f /etc/default/sequoiasql-mysql && { . /etc/default/sequoiasql-mysql;sql_type="mysql"; } || { . /etc/default/sequoiasql-mariadb;sql_type="mariadb"; }
+    
     # 需要 root 用户去处理 /etc/default 下的文件，删除 INSTALL_DIR 后的 '/' 和添加 SQL 的版本号
     if [ "`echo ${INSTALL_DIR} | grep '.*/$'`" != "" ]; then
         if [ "${MY_USER}" != "root" ]; then
@@ -47,10 +49,10 @@ echo "Begin to get sequoiasql install info"
         # 重新加载文件
         test -f /etc/default/sequoiasql-mysql && . /etc/default/sequoiasql-mysql || . /etc/default/sequoiasql-mariadb
     fi
-
+    
     SQL_INSTALL_DIR="${INSTALL_DIR}"
     test ! -f "${SQL_INSTALL_DIR}/bin/sdb_sql_ctl" && echo "[ERROR] ${SQL_INSTALL_DIR}/bin/sdb_sql_ctl does not exist" && exit 1
-
+    
     if [ "${VERSION}" == "" ]; then
         if [ "${MY_USER}" != "root" ]; then
             echo "[ERROR] The VERSION cannot be empty in /etc/default/sequoiasql-$sql_type, please run this tool as the root"
