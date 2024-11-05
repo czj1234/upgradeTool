@@ -8,6 +8,8 @@ var COORDADDR = "localhost";
 var COORDSVC = "11810";
 // 所有机器都可用的备份目录，注意此目录下不要有其他文件，否则可能会被覆盖
 var UPGRADEBACKUPPATH = "/sdbdata/data01/upgradebackup";
+// 时间标识，用于创建备份目录，建议使用当前时间如 "20240101"
+var DATESTR = "20240101";
 // SequoiaSQL 用户
 var SQLUSER = "sdbadmin";
 // SequoiaSQL 用户密码
@@ -26,3 +28,5 @@ var TESTCS = "testCS";
 var TESTCL = "testCL"
 // 回滚时是否需要安装 OM
 var ROLLBACKOM = false;
+// start.sh 脚本中 sdbcmart 等待节点超时时间，默认为 1300s
+var STARTTIMEOUT = 1300;
