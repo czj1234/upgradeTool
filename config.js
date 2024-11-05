@@ -32,3 +32,5 @@ var MYSQLDIFFPATH = "/home/sdbadmin/MySQLDiff/mysqldiff.py";
 var MYSQLHOSTNAMES = ["jsdb02", "jsdb04", "jsdb06", "hrjs1db3", "hrjs1db6", "hrjs1db9"];
 // start.sh 脚本中 sdbcmart 等待节点超时时间，默认为 1300s
 var STARTTIMEOUT = 1300;
+// 回滚时是否需要安装 OM
+var ROLLBACKOM = false;
