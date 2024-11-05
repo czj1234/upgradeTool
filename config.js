@@ -28,3 +28,5 @@ var TESTCL = "testCL"
 var MYSQLDIFFPATH = "/home/sdbadmin/MySQLDiff/mysqldiff.py";
 // mysql实例主机名(默认以配置的第一个主机上的所有数据库进行对比，需要注意第一个主机名的配置)
 var MYSQLHOSTNAMES = ["jsdb02", "jsdb04", "jsdb06", "hrjs1db3", "hrjs1db6", "hrjs1db9"];
+// start.sh 脚本中 sdbcmart 等待节点超时时间，默认为 1300s
+var STARTTIMEOUT = 1300;
