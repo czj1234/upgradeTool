@@ -1,8 +1,7 @@
 #!/bin/bash
 
 echo "Begin to check backup dir UPGRADEBACKUPPATH"
-DATESTR="`date +%Y%m%d`"
-UPGRADEBACKUPPATH=$(sdb -e "var CUROPR = \"getArg\";var ARGNAME = \"UPGRADEBACKUPPATH\";var DATESTR = \"${DATESTR}\"" -f cluster_opr.js)
+UPGRADEBACKUPPATH=$(sdb -e "var CUROPR = \"getArg\";var ARGNAME = \"UPGRADEBACKUPPATH\"" -f cluster_opr.js)
 test $? -ne 0 && echo "[ERROR] Failed to get UPGRADEBACKUPPATH from config.js" && exit 1
 test ! -d "${UPGRADEBACKUPPATH}" && echo "[ERROR] Failed to get UPGRADEBACKUPPATH from config.js" && exit 1
 echo "Backup dir: ${UPGRADEBACKUPPATH}"
@@ -25,7 +24,7 @@ test $? -ne 0 && echo "[ERROR] Failed to get HASQL instance group name from ha_i
 echo "Done"
 
 sdb -e "var CUROPR = \"checkCluster\";var INSTANCEGROUP = \"${INSTANCEGROUP}\"" -f cluster_opr.js
-sdb -e "var CUROPR = \"collect_new\";var INSTANCEGROUP = \"${INSTANCEGROUP}\";var DATESTR = \"${DATESTR}\"" -f cluster_opr.js
+sdb -e "var CUROPR = \"collect_new\";var INSTANCEGROUP = \"${INSTANCEGROUP}\"" -f cluster_opr.js
 
 echo "Begin to diff backup file"
 diff "${UPGRADEBACKUPPATH}/snapshot_cl_old.info" "${UPGRADEBACKUPPATH}/snapshot_cl_new.info"

@@ -73,8 +73,7 @@ fi
 echo "Done"
 
 echo "Begin to check backup dir UPGRADEBACKUPPATH"
-DATESTR="`date +%Y%m%d`"
-UPGRADEBACKUPPATH=$(${SDB_INSTALL_DIR}/bin/sdb -e "var CUROPR = \"getArg\";var ARGNAME = \"UPGRADEBACKUPPATH\";var DATESTR = \"${DATESTR}\"" -f cluster_opr.js)
+UPGRADEBACKUPPATH=$(${SDB_INSTALL_DIR}/bin/sdb -e "var CUROPR = \"getArg\";var ARGNAME = \"UPGRADEBACKUPPATH\"" -f cluster_opr.js)
 test $? -ne 0 && echo "Failed to get UPGRADEBACKUPPATH from config.js" && exit 1
 test "${UPGRADEBACKUPPATH}" == "" && echo "Failed to get UPGRADEBACKUPPATH from config.js" && exit 1
 
