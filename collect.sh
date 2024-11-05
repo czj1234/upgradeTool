@@ -45,4 +45,4 @@ if [[ -f '/etc/default/sequoiasql-mysql' || -f '/etc/default/sequoiasql-mariadb'
 fi
 # 保存集群升级前集合名，各个集合数据条数，域名和 HASQL 相关信息，用于升级后对比（在创建测试表之后再收集信息）
 # sdb -e "var CUROPR = \"collect_old\";var INSTANCEGROUP = \"${INSTANCEGROUP}\";var DATESTR = \"`date +%Y%m%d`\"" -f cluster_opr.js
-sdb -e "var CUROPR = \"collect_old\";var DATESTR = \"`date +%Y%m%d`\"" -f cluster_opr.js
+sdb -e "var CUROPR = \"collect_old\"" -f cluster_opr.js
